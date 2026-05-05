@@ -38,12 +38,21 @@ namespace ToDoApi.Controllers
 
             return Ok(task);
         }
+        //[HttpPost]
+        //public ActionResult<ToDoItem> Create(ToDoItem item)
+        //{
+        //    item.Id = tasks.Count + 1;
+        //    tasks.Add(item);
+        //    return Ok(item);
+        //}
+
         [HttpPost]
         public ActionResult<ToDoItem> Create(ToDoItem item)
         {
             item.Id = tasks.Count + 1;
             tasks.Add(item);
-            return Ok(item);
+
+            return CreatedAtAction(nameof(GetAll), new { id = item.Id }, item);
         }
 
         [HttpPut("{id}")]
