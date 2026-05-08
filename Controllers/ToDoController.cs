@@ -11,31 +11,46 @@ namespace ToDoApi.Controllers
     public class ToDoController : ControllerBase
     {
 
-        private readonly AppDbContext _context;
+            private readonly AppDbContext _context;
 
-        public ToDoController(AppDbContext context)
-        {
-            _context = context;
-        }
+            public ToDoController(AppDbContext context)
+            {
+                _context = context;
+            }
 
         //Get all data
         [HttpGet]
 
-        public async Task<ActionResult<IEnumerable<ToDoItem>>> GetAll()
+        public async Task<ActionResult<IEnumerable<ToDoItemDTO>>> GetAll()
         {
-            return await _context.ToDoItems.ToListAsync();
+            var items = await _context.ToDoItems
+                        .Select(x => new ToDoItemDTO
+                        {
+                            Id = x.Id,
+                            Title = x.Title,
+                            IsCompleted = x.IsCompleted
+                        }).ToListAsync();
+
+            return items;
         }
 
         //Get By Id
         [HttpGet("{id}")]
 
-        public async Task<ActionResult<ToDoItem>> GetById(int id)
+        public async Task<ActionResult<ToDoItemDTO>> GetById(int id)
         {
             var item = await _context.ToDoItems.FindAsync(id);
 
             if (item == null) return NotFound();
 
-            return item;
+            var dto = new ToDoItemDTO
+            {
+                Id = item.Id,
+                Title=item.Title,
+                IsCompleted=item.IsCompleted
+            };
+            return dto;
+
         }
 
         ////Create a record
@@ -55,12 +70,12 @@ namespace ToDoApi.Controllers
         //Create Record via DTO
         [HttpPost]
 
-        public async Task<ActionResult<ToDoItem>> Create (ToDoItemDTO dto)
+        public async Task<ActionResult<ToDoItem>> Create(ToDoItemDTO dto)
         {
             var item = new ToDoItem
             {
                 Title = dto.Title,
-                IsCompleted=dto.IsCompleted
+                IsCompleted = dto.IsCompleted
             };
 
             _context.ToDoItems.Add(item);
