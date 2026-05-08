@@ -3,11 +3,13 @@ using Microsoft.EntityFrameworkCore;
 using ToDoApi.Data;
 using ToDoApi.DTO;
 using ToDoApi.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ToDoApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class ToDoController : ControllerBase
     {
 
